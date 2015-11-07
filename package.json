@@ -1,0 +1,39 @@
+{
+  "name": "uniter-node",
+  "version": "0.0.1",
+  "description": "Require Uniter PHP in NodeJS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ingwie Phoenix <ingwie2000@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "beautifier": "^0.1.7",
+    "phpruntime": "^2.7.0",
+    "phptoast": "^2.2.0",
+    "phptojs": "^1.4.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uniter/uniter-node.git"
+  },
+  "keywords": [
+    "uniter",
+    "php",
+    "runtime",
+    "environment",
+    "transpiler",
+    "require",
+    "nodejs",
+    "extension"
+  ],
+  "bugs": {
+    "url": "https://github.com/uniter/uniter-node/issues"
+  },
+  "homepage": "https://github.com/uniter/uniter-node#readme"
+}
