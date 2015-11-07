@@ -8,6 +8,13 @@ var $environment = phprt.createEnvironment();
 var $parser = php2ast.create();
 var $options = {};
 
+// Set up defaults...
+var $stdout = $environment.getStdout();
+var $stderr = $environment.getStderr();
+
+$stdout.on("data",function(str){ process.stdout.write(str); });
+$stderr.on("data",function(str){ process.stderr.write(str); });
+
 function makeModule(src) {
     return beauty([
         // Pull ourselves in.

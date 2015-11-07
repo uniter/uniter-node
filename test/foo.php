@@ -1,7 +1,7 @@
 <?php
 
 // Talk...
-echo "Hello in UniterPHP";
+echo "Hello in UniterPHP\n";
 $say_hello();
 
 // Do something to JS.
@@ -12,7 +12,7 @@ $module->exports->meaningOfLife = 42;
 
 // Yes, even functions.
 $module->exports->derper = function() {
-    echo "I can be called from JS!";
+    echo "I can be called from JS!\n";
 };
 
 // print?
@@ -58,7 +58,7 @@ namespace UniterNode\Test {
 // Classes work too.
 class Bard {
     static function story() {
-        echo "Foo used to go to Baz' bar.";
+        echo "Foo used to go to Baz' bar.\n";
     }
 }
 Bard::story();
