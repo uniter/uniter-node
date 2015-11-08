@@ -15,28 +15,8 @@ $module->exports->derper = function() {
     echo "I can be called from JS!\n";
 };
 
-// print?
-// FIXME(Bug): This causes...an error.
-/*
-RangeError: Maximum call stack size exceeded
-    at String.match (native)
-    at module.exports (/Users/Ingwie/Work/uniter-node/node_modules/microdash/src/getType.js:15:37)
-    at Object.module.exports [as isString] (/Users/Ingwie/Work/uniter-node/node_modules/microdash/src/isString.js:15:12)
-    at ValueFactory._.extend.createFromNative (/Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/ValueFactory.js:81:19)
-    at ValueFactory._.extend.coerce (/Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/ValueFactory.js:52:25)
-    at /Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/Value/Array.js:54:39
-    at Object.module.exports [as each] (/Users/Ingwie/Work/uniter-node/node_modules/microdash/src/each.js:25:26)
-    at new ArrayValue (/Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/Value/Array.js:40:11)
-    at ValueFactory._.extend.createArray (/Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/ValueFactory.js:57:20)
-    at ValueFactory._.extend.createFromNative (/Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/ValueFactory.js:94:32)
-    at ValueFactory._.extend.coerce (/Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/ValueFactory.js:52:25)
-    at PropertyReference._.extend.getValue (/Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/Reference/Property.js:60:35)
-    at /Users/Ingwie/Work/uniter-node/node_modules/phpruntime/src/builtin/functions/variableHandling.js:87:42
-    at Object.module.exports [as each] (/Users/Ingwie/Work/uniter-node/node_modules/microdash/src/each.js:25:26)
-    at dump (/Users/Ingwie/Work/uniter-node/node_modules/phpruntime/src/builtin/functions/variableHandling.js:80:23)
-    at /Users/Ingwie/Work/uniter-node/node_modules/phpruntime/src/builtin/functions/variableHandling.js:86:29
-*/
-#var_dump($module);
+// print? Sure.
+var_dump($module);
 
 // Try to require! In fact, we can require ourselves.
 $util = $require("../");
@@ -47,7 +27,20 @@ $bar = $require("./bar.php");
 var_dump($bar);
 
 // But also...
-#$baz = require_once "./baz.php";
+// FIXME(Bug): Can not assign return to value.
+/* TypeError: value.getForAssignment is not a function
+    at Variable._.extend.setValue (/Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/Variable.js:132:40)
+    at /Users/Ingwie/Work/uniter-node/test/foo.php:46:30
+    at Engine._.extend.execute (/Users/Ingwie/Work/uniter-node/node_modules/phpcore/src/Engine.js:379:20)
+    at Object.<anonymous> (/Users/Ingwie/Work/uniter-node/test/foo.php:64:18)
+    at Module._compile (module.js:425:26)
+    at Object.UniterPHP.require.extensions..php (/Users/Ingwie/Work/uniter-node/index.js:77:16)
+    at Module.load (module.js:356:32)
+    at Function.Module._load (module.js:311:12)
+    at Module.require (module.js:366:17)
+    at require (module.js:385:17)
+*/
+#$bar = require_once("./baz.php");
 
 // Hey, namespaces?
 namespace UniterNode\Test {

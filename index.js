@@ -1,7 +1,9 @@
 var php2ast = require("phptoast"),
     php2js  = require("phptojs"),
     phprt   = require("phpruntime/sync"),
-    beauty  = require("beautifier").js_beautify;
+    beauty  = require("beautifier").js_beautify,
+    path = require("path"),
+    fs = require("fs");
 
 // This environment is used throughout the global scope.
 var $environment = phprt.createEnvironment();
@@ -12,16 +14,49 @@ var $options = {};
 var $stdout = $environment.getStdout();
 var $stderr = $environment.getStderr();
 
+// # I/O for console. STDIN is unused by default.
 $stdout.on("data",function(str){ process.stdout.write(str); });
 $stderr.on("data",function(str){ process.stderr.write(str); });
 
-function makeModule(src) {
+// include/_once|require/_once() support...
+$environment.options = {
+    include: function(requiredFile, p, sourceFile) {
+        var requireable;
+        if(path.isAbsolute(requiredFile)) {
+            requireable = requiredFile;
+        } else {
+            var sourceDir = path.dirname(sourceFile);
+            requireable = path.join(sourceDir, requiredFile);
+        }
+        var src = fs.readFileSync(requireable, "utf8");
+        var bareSource = compile(src, true);
+        var bareWrapper = new Function('return ' + bareSource + ';');
+        var wrapper = phprt.compile(bareWrapper);
+        p.resolve(wrapper);
+    }
+}
+
+// Simple wrapper function.
+function compile(source, bare) {
+    bare = bare || false;
+    var jsSource = php2js.transpile(
+        $parser.parse(source),
+        { sync: true, bare: bare }
+    );
+    return jsSource;
+}
+
+function makeModule(wrapper, file) {
+    file = JSON.stringify(file);
+    var thisModule = JSON.stringify(__filename);
     return beauty([
         // Pull ourselves in.
-        "var uniter = require('"+__filename+"')",
+        "var uniter = require("+thisModule+")",
+        "var _ = require('microdash');",
         // Generate/compile the engine and create a context
-        "var generator = "+src,
-        "var context = generator(uniter.getOptions(), uniter.getEnvironment());",
+        "var generator = "+wrapper,
+        "var opts = _.extend({path: "+file+"}, uniter.getOptions());",
+        "var context = generator(opts, uniter.getEnvironment());",
         // Expose the JS stuff...
         "context.expose(module, 'module');",
         "context.expose(exports, 'exports');",
@@ -35,12 +70,8 @@ function makeModule(src) {
 module.exports = function UniterPHP() {
     // Register!
     require.extensions[".php"] = function(module, filename) {
-        var realSource = require("fs").readFileSync(filename, 'utf8');
-        var newSource = php2js.transpile(
-            $parser.parse(realSource),
-            { sync: true }
-        );
-        var moduleCode = makeModule(newSource);
+        var source = fs.readFileSync(filename, 'utf8');
+        var moduleCode = makeModule(compile(source), filename);
 
         // Evaluate.
         module._compile(moduleCode, filename);
