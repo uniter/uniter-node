@@ -43,16 +43,17 @@ function compile(source, bare) {
         $parser.parse(source),
         { sync: true, bare: bare }
     );
-    return jsSource;
+    return beauty(jsSource);
 }
 
 function makeModule(wrapper, file) {
     file = JSON.stringify(file);
     var thisModule = JSON.stringify(__filename);
+    var _Module = JSON.stringify(require.resolve("microdash"));
     return beauty([
         // Pull ourselves in.
         "var uniter = require("+thisModule+")",
-        "var _ = require('microdash');",
+        "var _ = require("+_Module+");",
         // Generate/compile the engine and create a context
         "var generator = "+wrapper,
         "var opts = _.extend({path: "+file+"}, uniter.getOptions());",
